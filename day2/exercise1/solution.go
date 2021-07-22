@@ -1,0 +1,40 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+)
+
+func print(freq map[string]int)  {
+	// Convert structs to JSON.
+	data, err := json.MarshalIndent(freq,""," ")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(data))
+}
+
+func main(){
+
+	str := []string{"quick", "brown", "fox", "lazy", "dog"}
+	freq := make(map[string] int)
+
+	for i := 0; i < len(str); i++ {
+		done := make(chan bool)
+
+		go func() {
+			for _, ch := range str[i] {
+				freq[string(ch)]++
+			}
+			done <- true
+		}()
+
+		<- done
+	}
+
+	print(freq)
+
+}
