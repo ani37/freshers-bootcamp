@@ -19,14 +19,14 @@ func print(freq map[string]int)  {
 
 func main(){
 
-	str := []string{"quick", "brown", "fox", "lazy", "dog"}
+	words := []string{"quick", "brown", "fox", "lazy", "dog"}
 	freq := make(map[string] int)
 
-	for i := 0; i < len(str); i++ {
+	for i := 0; i < len(words); i++ {
 		done := make(chan bool)
 
 		go func() {
-			for _, ch := range str[i] {
+			for _, ch := range words[i] {
 				freq[string(ch)]++
 			}
 			done <- true

@@ -7,8 +7,10 @@ import (
 )
 
 var balance = 500
+var wg sync.WaitGroup
+var m sync.Mutex
 
-func deposit(amount int, wg *sync.WaitGroup, m *sync.Mutex) {
+func deposit(amount int) {
 	m.Lock()
 	balance += amount
 	fmt.Println("Successfully deposit performed, current account balance", balance)
@@ -16,7 +18,7 @@ func deposit(amount int, wg *sync.WaitGroup, m *sync.Mutex) {
 	wg.Done()
 }
 
-func withdrawal(amount int, wg *sync.WaitGroup, m *sync.Mutex) {
+func withdrawal(amount int) {
 	m.Lock()
 	if balance >= amount{
 		balance -= amount
@@ -30,13 +32,11 @@ func withdrawal(amount int, wg *sync.WaitGroup, m *sync.Mutex) {
 }
 
 func main() {
-	var w sync.WaitGroup
-	var m sync.Mutex
 
-	w.Add(2)
-	go deposit( rand.Intn(1000), &w, &m)
-	go withdrawal( rand.Intn(1000), &w, &m)
+	wg.Add(2)
+	go deposit( rand.Intn(1000))
+	go withdrawal( rand.Intn(1000))
 
-	w.Wait()
+	wg.Wait()
 	fmt.Println("final account balance:", balance)
 }

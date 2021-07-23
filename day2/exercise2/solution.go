@@ -16,7 +16,7 @@ func allocate(noOfStudents int, ratings chan int) {
 	close(ratings)
 }
 
-func calculate(wg *sync.WaitGroup,ratings chan int, average chan int){
+func findAverage(wg *sync.WaitGroup,ratings chan int, average chan int){
 
 	output :=0
 
@@ -39,7 +39,7 @@ func main(){
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	go calculate(&wg, ratings, average)
+	go findAverage(&wg, ratings, average)
 
 	wg.Wait()
 
