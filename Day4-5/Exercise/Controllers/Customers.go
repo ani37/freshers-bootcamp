@@ -1,8 +1,9 @@
 package Controllers
 
 import (
-	"Exercise/Models"
 	"fmt"
+
+	"Exercise/Models"
 
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -44,12 +45,12 @@ func GetCustomerByID(c *gin.Context) {
 	}
 }
 
-//GetOrderByCustomerID ... Get the order by customer id
-func GetOrderByCustomerID(c *gin.Context) {
+//GetOrdersByCustomerID ... Get the order by customer id
+func GetOrdersByCustomerID(c *gin.Context) {
 	id := c.Params.ByName("id")
 
-	var order Models.Order
-	err := Models.GetOrderByCustomerID(&order, id)
+	var order []Models.Order
+	err := Models.GetOrdersByCustomerID(&order, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
