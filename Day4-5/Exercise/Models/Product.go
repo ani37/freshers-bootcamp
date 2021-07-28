@@ -2,7 +2,6 @@ package Models
 
 import (
 	"Exercise/Config"
-	"fmt"
 )
 
 //GetAllProducts Fetch all products data
@@ -29,9 +28,9 @@ func GetProductByID(product *Product, id string) (err error) {
 	return nil
 }
 
-//GetOrderByProductID ... Fetch only one order by ID
-func GetOrderByProductID(order *Order, ProductId string) (err error) {
-	if err = Config.DB.Where("product_id = ?", ProductId).First(order).Error; err != nil {
+//GetOrdersByProductID ... Fetch only one order by ID
+func GetOrdersByProductID(order *[]Order, ProductId string) (err error) {
+	if err = Config.DB.Where("product_id = ?", ProductId).Find(order).Error; err != nil {
 		return err
 	}
 	return nil
@@ -39,7 +38,7 @@ func GetOrderByProductID(order *Order, ProductId string) (err error) {
 
 //UpdateProductDetails ... Update product
 func UpdateProductDetails(product *Product, id string) (err error) {
-	fmt.Println(product)
+	//fmt.Println(product)
 	Config.DB.Save(product)
 	return nil
 }

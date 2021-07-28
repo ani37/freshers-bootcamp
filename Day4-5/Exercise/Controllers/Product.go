@@ -1,14 +1,16 @@
 package Controllers
 
 import (
-	"Exercise/Models"
 	"fmt"
+
+	"Exercise/Models"
 
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 //GetProducts ... Get all products
+// return message as well
 func GetProducts(c *gin.Context) {
 	var product []Models.Product
 	err := Models.GetAllProducts(&product)
@@ -28,7 +30,13 @@ func AddProductDetails(c *gin.Context) {
 		fmt.Println(err.Error())
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, product)
+		c.JSON(http.StatusOK, gin.H{
+			"prodId":   product.ID,
+			"name":     product.Name,
+			"quantity": product.Quantity,
+			"price":    product.Price,
+			"message":  "product added successfully",
+		})
 	}
 }
 
@@ -44,12 +52,12 @@ func GetProductByID(c *gin.Context) {
 	}
 }
 
-//GetOrderByProductID ... Get the order by product id
-func GetOrderByProductID(c *gin.Context) {
+//GetOrdersByProductID ... Get the order by product id
+func GetOrdersByProductID(c *gin.Context) {
 	id := c.Params.ByName("id")
 
-	var order Models.Order
-	err := Models.GetOrderByProductID(&order, id)
+	var order []Models.Order
+	err := Models.GetOrdersByProductID(&order, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {

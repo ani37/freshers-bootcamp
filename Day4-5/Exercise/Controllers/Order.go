@@ -1,8 +1,9 @@
 package Controllers
 
 import (
-	"Exercise/Models"
 	"fmt"
+
+	"Exercise/Models"
 
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,11 +20,11 @@ func GetOrders(c *gin.Context) {
 	}
 }
 
-//AddOrderDetails ... Create Order
-func AddOrderDetails(c *gin.Context) {
+//PlaceOrderDetails ... Create Order
+func PlaceOrderDetails(c *gin.Context) {
 	var order Models.Order
 	c.BindJSON(&order)
-	err := Models.AddOrderDetails(&order)
+	err := Models.PlaceOrderDetails(&order)
 	if err != nil {
 		fmt.Println(err.Error())
 		c.AbortWithStatus(http.StatusNotFound)

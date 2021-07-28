@@ -1,10 +1,14 @@
 package Models
 
 import (
-	"Exercise/Config"
 	"fmt"
-	"gorm.io/gorm"
+	"strconv"
+	"sync"
+
+	"Exercise/Config"
 )
+
+var mutex sync.Mutex
 
 //GetAllOrders Fetch all orders data
 func GetAllOrders(order *[]Order) (err error) {
@@ -14,15 +18,32 @@ func GetAllOrders(order *[]Order) (err error) {
 	return nil
 }
 
-//AddOrderDetails ... Insert New data
-func AddOrderDetails(order *Order) (err error) {
+//PlaceOrderDetails ... Insert New data
+func PlaceOrderDetails(order *Order) (err error) {
 
-	if err := Config.DB.Table("product").Where("id = ? AND quantity >= ?",
-		order.ProductID, order.Quantity).
-		UpdateColumn("quantity", gorm.Expr("quantity - ?", order.Quantity)).Error; err != nil {
+	order.Status = "Failed!"
+	defer mutex.Unlock()
+	err = GetProductByID(&order.Product, strconv.Itoa(int(order.ProductID)))
+	if err != nil {
 		return err
 	}
-	if err := Config.DB.Table("order").Create(order).Error; err != nil {
+	err = GetCustomerByID(&order.Customer, strconv.Itoa(int(order.CustomerID)))
+	if err != nil {
+		return err
+	}
+	mutex.Lock()
+	_ = GetProductByID(&order.Product, strconv.Itoa(int(order.ProductID)))
+	if order.Product.Quantity < order.Quantity {
+		order.Status = "Processed!"
+		if err = Config.DB.Create(order).Error; err != nil {
+			return err
+		}
+		return nil
+	}
+	order.Product.Quantity = order.Product.Quantity - order.Quantity
+	UpdateProductDetails(&order.Product, strconv.Itoa(int(order.ProductID)))
+	order.Status = "Successful!"
+	if err = Config.DB.Create(order).Error; err != nil {
 		return err
 	}
 	return nil

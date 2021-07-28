@@ -2,7 +2,6 @@ package Models
 
 import (
 	"Exercise/Config"
-	"fmt"
 )
 
 //GetAllCustomers Fetch all customers data
@@ -29,9 +28,9 @@ func GetCustomerByID(customer *Customer, id string) (err error) {
 	return nil
 }
 
-//GetOrderByCustomerID ... Fetch only one order by ID
-func GetOrderByCustomerID(order *Order, CustomerId string) (err error) {
-	if err = Config.DB.Where("customer_id = ?", CustomerId).First(order).Error; err != nil {
+//GetOrdersByCustomerID ... Fetch only one order by ID
+func GetOrdersByCustomerID(order *[]Order, CustomerId string) (err error) {
+	if err = Config.DB.Where("customer_id = ?", CustomerId).Find(order).Error; err != nil {
 		return err
 	}
 	return nil
@@ -39,13 +38,15 @@ func GetOrderByCustomerID(order *Order, CustomerId string) (err error) {
 
 //UpdateCustomerDetails ... Update customer
 func UpdateCustomerDetails(customer *Customer, id string) (err error) {
-	fmt.Println(customer)
+	//fmt.Println(customer)
+	//handle errors
 	Config.DB.Save(customer)
 	return nil
 }
 
 //DeleteCustomerDetails ... Delete customer
 func DeleteCustomerDetails(customer *Customer, id string) (err error) {
+	// handle errors
 	Config.DB.Where("id = ?", id).Delete(customer)
 	return nil
 }
